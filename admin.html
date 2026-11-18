@@ -16,6 +16,9 @@
 <div class="two"><div><label for="pl">Location</label><input id="pl"></div><div><label for="pc">Client (optional)</label><input id="pc"></div></div>
 <div class="two"><div><label for="ps">Status</label><select id="ps"><option>Completed</option><option>Ongoing</option><option>Upcoming</option></select></div><div><label for="pd">Date</label><input id="pd" type="month"></div></div>
 <label for="pe">Description</label><textarea id="pe" rows="4"></textarea>
+<label for="phi">Project photos (images, up to 10)</label><input id="phi" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple>
+<p class="sub" id="phn" style="margin:6px 0 0">No photos chosen</p>
+<div class="acts"><button class="btn alt sm" id="phx" type="button" hidden>Remove current photos</button></div>
 <label for="fi">BEME file (PDF or image)</label><input id="fi" type="file" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp,image/gif">
 <p class="sub" id="fn" style="margin:6px 0 0">No file chosen</p>
 <div class="acts"><button class="btn" id="sv" type="button">Save project</button><button class="btn alt" id="ce" type="button" hidden>Cancel edit</button></div>
@@ -29,7 +32,7 @@
 (async function(){
 var $=function(i){return document.getElementById(i)};
 function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
-var sb=supabase.createClient(CVOOP.url,CVOOP.key),B=CVOOP.bucket,editId=null,editFiles=[],pending=null,busy=false;
+var sb=supabase.createClient(CVOOP.url,CVOOP.key),B=CVOOP.bucket,editId=null,editFiles=[],editPhotos=[],pendPh=null,dropPh=false,pending=null,busy=false;
 function msg(t,bad){var m=$("am");m.textContent=t;m.style.color=bad?"#d64545":"";if(t)m.scrollIntoView({block:"nearest"})}
 function loadPdfJs(){return new Promise(function(res,rej){if(window.pdfjsLib)return res(window.pdfjsLib);var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
  s.onload=function(){if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";res(window.pdfjsLib)}else rej(new Error("pdfjs"))};
@@ -56,10 +59,10 @@ async function pdfBlobs(f){var lib;try{lib=await loadPdfJs()}catch(e){throw new 
   await pg.render({canvasContext:x,viewport:vp}).promise;stamp(x,cv.width,cv.height);
   var b=await new Promise(function(r){cv.toBlob(r,"image/jpeg",.85)});if(!b)throw new Error("blob");out.push(b)}
  return out}
-function reset(){editId=null;editFiles=[];pending=null;["pt","pl","pc","pd","pe"].forEach(function(i){$(i).value=""});$("ps").selectedIndex=0;$("fi").value="";
+function reset(){editId=null;editFiles=[];pending=null;editPhotos=[];pendPh=null;dropPh=false;$("phi").value="";$("phn").textContent="No photos chosen";$("phx").hidden=true;["pt","pl","pc","pd","pe"].forEach(function(i){$(i).value=""});$("ps").selectedIndex=0;$("fi").value="";
  $("fn").textContent="No file chosen";$("ft").textContent="Add a project";$("sv").textContent="Save project";$("ce").hidden=true}
-function edit(p){reset();editId=p.id;editFiles=p.beme_files||[];$("pt").value=p.title||"";$("pl").value=p.location||"";$("pc").value=p.client||"";$("pd").value=p.project_date||"";$("pe").value=p.description||"";$("ps").value=p.status||"Completed";
- $("fn").textContent=editFiles.length?"Current BEME: "+editFiles.length+" page(s). Choose a file to replace it.":"No file chosen";$("ft").textContent="Edit project";$("sv").textContent="Update project";$("ce").hidden=false;window.scrollTo(0,0)}
+function edit(p){reset();editId=p.id;editFiles=p.beme_files||[];editPhotos=p.photos||[];$("pt").value=p.title||"";$("pl").value=p.location||"";$("pc").value=p.client||"";$("pd").value=p.project_date||"";$("pe").value=p.description||"";$("ps").value=p.status||"Completed";
+ $("fn").textContent=editFiles.length?"Current BEME: "+editFiles.length+" page(s). Choose a file to replace it.":"No file chosen";$("ft").textContent="Edit project";$("sv").textContent="Update project";$("ce").hidden=false;$("phn").textContent=editPhotos.length?"Current photos: "+editPhotos.length+". Choose new photos to replace them.":"No photos chosen";$("phx").hidden=!editPhotos.length;window.scrollTo(0,0)}
 $("fi").onchange=async function(){var inp=this,f=inp.files[0];pending=null;if(!f){$("fn").textContent="No file chosen";return}
  var isPdf=f.type==="application/pdf"||/\.pdf$/i.test(f.name),isImg=/^image\/(png|jpe?g|webp|gif)$/.test(f.type);
  if(!isPdf&&!isImg){msg("Please choose a PDF or an image (PNG, JPG, WEBP or GIF).",1);inp.value="";return}
@@ -69,6 +72,14 @@ $("fi").onchange=async function(){var inp=this,f=inp.files[0];pending=null;if(!f
   $("fn").textContent=f.name+" ("+bl.length+(bl.length>1?" pages":" page")+" ready)";msg("File ready. Click Save project to finish.")}
  catch(e){inp.value="";var m=e&&e.message;msg(m==="pdfjs"?"Could not read that PDF here. Please upload the BEME as an image instead.":m==="pages"?"That PDF has more than 30 pages. Please split it into smaller files.":"Could not prepare that file. Please try again.",1)}
  finally{busy=false}};
+$("phi").onchange=async function(){var inp=this,fs=[].slice.call(inp.files||[]);pendPh=null;dropPh=false;if(!fs.length){$("phn").textContent="No photos chosen";return}
+ if(fs.length>10){msg("Please choose at most 10 photos at a time.",1);inp.value="";return}
+ for(var k=0;k<fs.length;k++){if(!/^image\/(png|jpe?g|webp|gif)$/.test(fs[k].type)){msg("Photos must be PNG, JPG, WEBP or GIF images.",1);inp.value="";return}if(fs[k].size>20*1024*1024){msg("Each photo must be under 20 MB.",1);inp.value="";return}}
+ busy=true;
+ try{var out=[];for(var i=0;i<fs.length;i++){msg("Adding watermark to photo "+(i+1)+" of "+fs.length+"...");out.push(await burn(fs[i]))}pendPh=out;$("phn").textContent=out.length+" photo(s) ready";msg("Photos ready. Click Save project to finish.")}
+ catch(e){inp.value="";pendPh=null;msg("Could not prepare a photo. Please try again.",1)}
+ finally{busy=false}};
+$("phx").onclick=function(){dropPh=true;pendPh=null;$("phi").value="";$("phn").textContent="Current photos will be removed when you save.";$("phx").hidden=true};
 $("sv").onclick=async function(){
  if(busy){msg("Please wait for the file to finish preparing.",1);return}
  var t=$("pt").value.trim();if(!t){msg("Please enter a project title.",1);return}
@@ -77,19 +88,21 @@ $("sv").onclick=async function(){
   var files=editFiles;
   if(pending){var id=crypto.randomUUID();files=[];
    for(var i=0;i<pending.length;i++){var p=id+"/page-"+(i+1)+".jpg";var r=await sb.storage.from(B).upload(p,pending[i],{contentType:"image/jpeg"});if(r.error)throw r.error;files.push(p);up.push(p)}}
-  var row={title:t,location:$("pl").value.trim(),client:$("pc").value.trim(),status:$("ps").value,project_date:$("pd").value,description:$("pe").value.trim(),beme_files:files};
+  var photos=dropPh?[]:editPhotos;if(pendPh){var pid=crypto.randomUUID();photos=[];for(var j=0;j<pendPh.length;j++){var pp=pid+"/photo-"+(j+1)+".jpg";var r2=await sb.storage.from(B).upload(pp,pendPh[j],{contentType:"image/jpeg"});if(r2.error)throw r2.error;photos.push(pp);up.push(pp)}}
+  var row={title:t,location:$("pl").value.trim(),client:$("pc").value.trim(),status:$("ps").value,project_date:$("pd").value,description:$("pe").value.trim(),beme_files:files,photos:photos};
   var q=editId?await sb.from("projects").update(row).eq("id",editId).select():await sb.from("projects").insert(row).select();
   if(q.error)throw q.error;if(!q.data||!q.data.length)throw new Error("You are not allowed to save. Please log in again.");
   if(pending&&editId&&editFiles.length)await sb.storage.from(B).remove(editFiles);
+  if((pendPh||dropPh)&&editId&&editPhotos.length)await sb.storage.from(B).remove(editPhotos);
   reset();msg("Project saved. It now shows on the Projects page.");await load();
  }catch(e){if(up.length)await sb.storage.from(B).remove(up);msg("Could not save: "+((e&&e.message)||"unknown error")+". Please try again.",1);b.textContent=lbl}
  finally{b.disabled=false;busy=false}};
 async function del(p){try{var r=await sb.from("projects").delete().eq("id",p.id).select();if(r.error)throw r.error;if(!r.data.length)throw new Error("You are not allowed to delete. Please log in again.");
- if((p.beme_files||[]).length)await sb.storage.from(B).remove(p.beme_files);await load()}catch(e){msg("Could not delete: "+e.message,1)}}
+ var fl=(p.beme_files||[]).concat(p.photos||[]);if(fl.length)await sb.storage.from(B).remove(fl);await load()}catch(e){msg("Could not delete: "+e.message,1)}}
 async function load(){var r=await sb.from("projects").select("*").order("created_at",{ascending:false}),L=$("list");L.textContent="";
  if(r.error){L.textContent="Could not load projects.";return}
  (r.data||[]).forEach(function(p){var c=el("div","card");c.appendChild(el("h3",null,p.title));
-  c.appendChild(el("div","meta",[p.location,p.client,p.status,p.project_date].filter(Boolean).join(" \u00b7 ")+" \u00b7 "+(p.beme_files||[]).length+" BEME page(s)"));
+  c.appendChild(el("div","meta",[p.location,p.client,p.status,p.project_date].filter(Boolean).join(" \u00b7 ")+" \u00b7 "+(p.beme_files||[]).length+" BEME page(s) \u00b7 "+(p.photos||[]).length+" photo(s)"));
   var a=el("div","acts"),e=el("button","btn alt sm","Edit"),d=el("button","btn alt sm","Delete");e.type=d.type="button";e.onclick=function(){edit(p)};
   d.onclick=function(){if(d.dataset.s){del(p)}else{d.dataset.s="1";d.textContent="Click again to delete";setTimeout(function(){d.dataset.s="";d.textContent="Delete"},4000)}};
   a.appendChild(e);a.appendChild(d);c.appendChild(a);L.appendChild(c)})}

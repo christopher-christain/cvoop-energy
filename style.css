@@ -90,3 +90,5 @@ section{padding:36px 0}h2{font-size:1.5rem}
 .lbox .bimg{max-height:calc(100vh - 110px);width:auto;max-width:100%;border:0}
 @media print{.bwrap,.lbox{display:none!important}}
 .bshield.wm{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='160'%3E%3Ctext x='130' y='80' text-anchor='middle' font-family='Arial' font-size='22' font-weight='700' fill='white' fill-opacity='.55' stroke='black' stroke-opacity='.35' stroke-width='.8' transform='rotate(-30 130 80)'%3ECVOOP ENERGY%3C/text%3E%3C/svg%3E");background-repeat:repeat}
+
+.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;margin-top:12px}.ph .bwrap{margin-top:0}.ph .bimg{height:96px;max-height:none;object-fit:cover}

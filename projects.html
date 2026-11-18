@@ -34,7 +34,7 @@ try{
  var r=await sb.from("projects").select("*").order("created_at",{ascending:false});if(r.error)throw r.error;
  var rows=r.data||[];
  if(!rows.length){$("projMsg").textContent="Completed projects will be shown here soon.";return}
- var all=[];rows.forEach(function(p){(p.beme_files||[]).forEach(function(f){all.push(f)})});
+ var all=[];rows.forEach(function(p){(p.beme_files||[]).concat(p.photos||[]).forEach(function(f){all.push(f)})});
  var map={};
  if(all.length){var s=await sb.storage.from(CVOOP.bucket).createSignedUrls(all,3600);(s.data||[]).forEach(function(x){if(x.signedUrl)map[x.path]=x.signedUrl})}
  $("projMsg").hidden=true;
@@ -42,8 +42,10 @@ try{
   var c=el("div","card proj");c.appendChild(el("h3",null,p.title||"Untitled"));
   c.appendChild(el("div","meta",[p.location,p.client,p.status,p.project_date].filter(Boolean).join(" \u00b7 ")));
   if(p.description)c.appendChild(el("p",null,p.description));
+  var pu=(p.photos||[]).map(function(f){return map[f]}).filter(Boolean);
+  if(pu.length){var gp=el("div","ph"),pa="Photo of "+(p.title||"project");pu.forEach(function(u){gp.appendChild(prot(u,pa,false,pu))});c.appendChild(gp)}
   var urls=(p.beme_files||[]).map(function(f){return map[f]}).filter(Boolean);
-  if(urls.length){var alt="BEME for "+(p.title||"project");c.appendChild(prot(urls[0],alt,false,urls));
+  if(urls.length){var alt="BEME for "+(p.title||"project");c.appendChild(el("div","meta","Bill of quantities (BEME)"));c.appendChild(prot(urls[0],alt,false,urls));
    var a=el("div","acts"),v=el("button","btn alt sm",urls.length>1?"View BEME ("+urls.length+" pages)":"View BEME");v.type="button";v.onclick=function(){openBox(urls,alt)};a.appendChild(v);c.appendChild(a)}
   $("projList").appendChild(c)});
 }catch(e){$("projMsg").hidden=false;$("projMsg").textContent="Projects could not be loaded right now. Please try again later."}

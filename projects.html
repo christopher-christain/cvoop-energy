@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Projects | CVOOP Energy</title><meta name="description" content="Solar projects completed by CVOOP Energy."><link rel="stylesheet" href="style.css"></head>
+<body data-view="home">
+<div id="sky" aria-hidden="true"><div id="sun"></div><div id="moon"></div></div>
+<header><div class="wrap"><nav>
+<a class="logo" href="index.html">CVOOP <span>Energy</span></a>
+<button class="menu" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+<div class="navlinks" id="navLinks"><a class="link" href="index.html#services">Services</a><a class="link" href="index.html#process">How it works</a><a class="link" href="projects.html">Projects</a><a class="link" href="index.html#savings">Savings</a><a class="btn" style="margin-left:20px;padding:8px 16px" href="index.html#contact">Get a quote</a></div>
+</nav></div></header>
+
+<main><section><div class="wrap">
+<h2>Our projects</h2><p class="sub">Recent jobs, with the scope and bill of quantities (BEME).</p>
+<div class="grid" id="projList"></div>
+<p class="sub" id="projMsg">Loading projects...</p>
+</div></section></main>
+<footer><div class="wrap">© <span id="y"></span> CVOOP Energy. All rights reserved.<br>WhatsApp: 0904 288 3487 · <a href="mailto:cvoopenergy@gmail.com" style="color:inherit">cvoopenergy@gmail.com</a></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="site.js"></script>
+<script>
+document.getElementById("y").textContent=new Date().getFullYear();
+(async function(){
+var $=function(i){return document.getElementById(i)};
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function prot(u,alt,big,all){var w=el("div","bwrap"),g=el("img","bimg");g.src=u;g.alt=alt;g.draggable=false;w.appendChild(g);w.appendChild(el("div","bshield"));
+ w.oncontextmenu=function(e){e.preventDefault()};w.ondragstart=function(e){e.preventDefault()};if(!big)w.onclick=function(){openBox(all||[u],alt)};return w}
+function openBox(urls,alt){var o=el("div","lbox"),x=el("button","btn sm","Close");x.type="button";
+ var kd=function(e){if(e.key==="Escape")cl()},cl=function(){o.remove();document.removeEventListener("keydown",kd)};
+ x.onclick=cl;o.onclick=function(e){if(e.target===o)cl()};document.addEventListener("keydown",kd);o.appendChild(x);
+ urls.forEach(function(s,i){o.appendChild(prot(s,alt+(urls.length>1?" page "+(i+1):""),true))});document.body.appendChild(o)}
+try{
+ var sb=supabase.createClient(CVOOP.url,CVOOP.key);
+ var r=await sb.from("projects").select("*").order("created_at",{ascending:false});if(r.error)throw r.error;
+ var rows=r.data||[];
+ if(!rows.length){$("projMsg").textContent="Completed projects will be shown here soon.";return}
+ var all=[];rows.forEach(function(p){(p.beme_files||[]).forEach(function(f){all.push(f)})});
+ var map={};
+ if(all.length){var s=await sb.storage.from(CVOOP.bucket).createSignedUrls(all,3600);(s.data||[]).forEach(function(x){if(x.signedUrl)map[x.path]=x.signedUrl})}
+ $("projMsg").hidden=true;
+ rows.forEach(function(p){
+  var c=el("div","card proj");c.appendChild(el("h3",null,p.title||"Untitled"));
+  c.appendChild(el("div","meta",[p.location,p.client,p.status,p.project_date].filter(Boolean).join(" \u00b7 ")));
+  if(p.description)c.appendChild(el("p",null,p.description));
+  var urls=(p.beme_files||[]).map(function(f){return map[f]}).filter(Boolean);
+  if(urls.length){var alt="BEME for "+(p.title||"project");c.appendChild(prot(urls[0],alt,false,urls));
+   var a=el("div","acts"),v=el("button","btn alt sm",urls.length>1?"View BEME ("+urls.length+" pages)":"View BEME");v.type="button";v.onclick=function(){openBox(urls,alt)};a.appendChild(v);c.appendChild(a)}
+  $("projList").appendChild(c)});
+}catch(e){$("projMsg").hidden=false;$("projMsg").textContent="Projects could not be loaded right now. Please try again later."}
+})();
+</script>
+</body></html>

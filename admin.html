@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Admin | CVOOP Energy</title><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="style.css"></head>
+<body data-view="home">
+<div id="sky" aria-hidden="true"><div id="sun"></div><div id="moon"></div></div>
+<main><div class="wrap" style="padding-top:28px;padding-bottom:48px">
+<h2>CVOOP Energy admin</h2>
+<div id="login" class="adm" style="max-width:420px">
+<label for="em">Email</label><input id="em" type="email" autocomplete="username">
+<label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password">
+<div class="acts"><button class="btn" id="go" type="button">Log in</button></div><p class="sub" id="lm"></p></div>
+<div id="panel" hidden>
+<div class="acts" style="justify-content:space-between;align-items:center"><a href="index.html">← Back to website</a><button class="btn alt sm" id="out" type="button">Log out</button></div>
+<div class="adm" style="margin-top:12px"><h3 id="ft">Add a project</h3>
+<label for="pt">Project title</label><input id="pt">
+<div class="two"><div><label for="pl">Location</label><input id="pl"></div><div><label for="pc">Client (optional)</label><input id="pc"></div></div>
+<div class="two"><div><label for="ps">Status</label><select id="ps"><option>Completed</option><option>Ongoing</option><option>Upcoming</option></select></div><div><label for="pd">Date</label><input id="pd" type="month"></div></div>
+<label for="pe">Description</label><textarea id="pe" rows="4"></textarea>
+<label for="fi">BEME file (PDF or image)</label><input id="fi" type="file" accept="application/pdf,.pdf,image/png,image/jpeg,image/webp,image/gif">
+<p class="sub" id="fn" style="margin:6px 0 0">No file chosen</p>
+<div class="acts"><button class="btn" id="sv" type="button">Save project</button><button class="btn alt" id="ce" type="button" hidden>Cancel edit</button></div>
+<p class="sub" id="am"></p></div>
+<h3 style="margin-top:28px">Your projects</h3><div class="grid" id="list"></div>
+</div></div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="site.js"></script>
+<script>
+(async function(){
+var $=function(i){return document.getElementById(i)};
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+var sb=supabase.createClient(CVOOP.url,CVOOP.key),B=CVOOP.bucket,editId=null,editFiles=[],pending=null,busy=false;
+function msg(t,bad){var m=$("am");m.textContent=t;m.style.color=bad?"#d64545":"";if(t)m.scrollIntoView({block:"nearest"})}
+function loadPdfJs(){return new Promise(function(res,rej){if(window.pdfjsLib)return res(window.pdfjsLib);var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+ s.onload=function(){if(window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";res(window.pdfjsLib)}else rej(new Error("pdfjs"))};
+ s.onerror=function(){rej(new Error("pdfjs"))};document.head.appendChild(s)})}
+function stamp(x,w,h){var T="CVOOP ENERGY",fs=Math.max(20,Math.round(Math.min(w,h)/12));x.save();x.font="700 "+fs+"px Arial,sans-serif";x.textAlign="center";x.textBaseline="middle";x.lineWidth=Math.max(1,fs/18);x.fillStyle="rgba(120,120,120,.45)";x.strokeStyle="rgba(0,0,0,.35)";
+ var gx=x.measureText(T).width*1.5,gy=fs*3.2,d=Math.hypot(w,h);x.translate(w/2,h/2);x.rotate(-Math.PI/6);
+ var row=0;for(var yy=-d;yy<=d;yy+=gy,row++){for(var xx=-d+(row%2?gx/2:0);xx<=d;xx+=gx){x.strokeText(T,xx,yy);x.fillText(T,xx,yy)}}x.restore()}
+function burn(f){return new Promise(function(res,rej){var url=URL.createObjectURL(f),im=new Image();
+ im.onerror=function(){URL.revokeObjectURL(url);rej(new Error("img"))};
+ im.onload=function(){URL.revokeObjectURL(url);var m=Math.max(im.naturalWidth,im.naturalHeight),sc=m>2400?2400/m:1,w=Math.round(im.naturalWidth*sc),h=Math.round(im.naturalHeight*sc),cv=document.createElement("canvas");cv.width=w;cv.height=h;var x=cv.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  var T="CVOOP ENERGY",fs=Math.max(20,Math.round(Math.min(w,h)/12));x.font="700 "+fs+"px Arial,sans-serif";x.textAlign="center";x.textBaseline="middle";x.lineWidth=Math.max(1,fs/18);x.fillStyle="rgba(255,255,255,.55)";x.strokeStyle="rgba(0,0,0,.4)";
+  var gx=x.measureText(T).width*1.5,gy=fs*3.2,d=Math.hypot(w,h);x.translate(w/2,h/2);x.rotate(-Math.PI/6);
+  var row=0;for(var yy=-d;yy<=d;yy+=gy,row++){for(var xx=-d+(row%2?gx/2:0);xx<=d;xx+=gx){x.strokeText(T,xx,yy);x.fillText(T,xx,yy)}}
+  cv.toBlob(function(b){b?res(new File([b],f.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"})):rej(new Error("blob"))},"image/jpeg",.9)};
+ im.src=url})}
+
+async function pdfBlobs(f){var lib;try{lib=await loadPdfJs()}catch(e){throw new Error("pdfjs")}
+ var doc;try{doc=await lib.getDocument({data:await f.arrayBuffer()}).promise}catch(e){throw new Error("pdfjs")}
+ if(doc.numPages>30)throw new Error("pages");var out=[];
+ for(var i=1;i<=doc.numPages;i++){msg("Preparing page "+i+" of "+doc.numPages+"...");
+  var pg=await doc.getPage(i),v0=pg.getViewport({scale:1}),vp=pg.getViewport({scale:Math.min(2.5,1600/v0.width)}),cv=document.createElement("canvas");
+  cv.width=Math.round(vp.width);cv.height=Math.round(vp.height);var x=cv.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,cv.width,cv.height);
+  await pg.render({canvasContext:x,viewport:vp}).promise;stamp(x,cv.width,cv.height);
+  var b=await new Promise(function(r){cv.toBlob(r,"image/jpeg",.85)});if(!b)throw new Error("blob");out.push(b)}
+ return out}
+function reset(){editId=null;editFiles=[];pending=null;["pt","pl","pc","pd","pe"].forEach(function(i){$(i).value=""});$("ps").selectedIndex=0;$("fi").value="";
+ $("fn").textContent="No file chosen";$("ft").textContent="Add a project";$("sv").textContent="Save project";$("ce").hidden=true}
+function edit(p){reset();editId=p.id;editFiles=p.beme_files||[];$("pt").value=p.title||"";$("pl").value=p.location||"";$("pc").value=p.client||"";$("pd").value=p.project_date||"";$("pe").value=p.description||"";$("ps").value=p.status||"Completed";
+ $("fn").textContent=editFiles.length?"Current BEME: "+editFiles.length+" page(s). Choose a file to replace it.":"No file chosen";$("ft").textContent="Edit project";$("sv").textContent="Update project";$("ce").hidden=false;window.scrollTo(0,0)}
+$("fi").onchange=async function(){var inp=this,f=inp.files[0];pending=null;if(!f){$("fn").textContent="No file chosen";return}
+ var isPdf=f.type==="application/pdf"||/\.pdf$/i.test(f.name),isImg=/^image\/(png|jpe?g|webp|gif)$/.test(f.type);
+ if(!isPdf&&!isImg){msg("Please choose a PDF or an image (PNG, JPG, WEBP or GIF).",1);inp.value="";return}
+ if(f.size>20*1024*1024){msg("That file is over 20 MB.",1);inp.value="";return}
+ busy=true;
+ try{msg(isPdf?"Preparing protected pages...":"Adding watermark...");var bl=isPdf?await pdfBlobs(f):[await burn(f)];pending=bl;
+  $("fn").textContent=f.name+" ("+bl.length+(bl.length>1?" pages":" page")+" ready)";msg("File ready. Click Save project to finish.")}
+ catch(e){inp.value="";var m=e&&e.message;msg(m==="pdfjs"?"Could not read that PDF here. Please upload the BEME as an image instead.":m==="pages"?"That PDF has more than 30 pages. Please split it into smaller files.":"Could not prepare that file. Please try again.",1)}
+ finally{busy=false}};
+$("sv").onclick=async function(){
+ if(busy){msg("Please wait for the file to finish preparing.",1);return}
+ var t=$("pt").value.trim();if(!t){msg("Please enter a project title.",1);return}
+ var b=this,lbl=b.textContent,up=[];b.disabled=true;busy=true;msg("Saving...");
+ try{
+  var files=editFiles;
+  if(pending){var id=crypto.randomUUID();files=[];
+   for(var i=0;i<pending.length;i++){var p=id+"/page-"+(i+1)+".jpg";var r=await sb.storage.from(B).upload(p,pending[i],{contentType:"image/jpeg"});if(r.error)throw r.error;files.push(p);up.push(p)}}
+  var row={title:t,location:$("pl").value.trim(),client:$("pc").value.trim(),status:$("ps").value,project_date:$("pd").value,description:$("pe").value.trim(),beme_files:files};
+  var q=editId?await sb.from("projects").update(row).eq("id",editId).select():await sb.from("projects").insert(row).select();
+  if(q.error)throw q.error;if(!q.data||!q.data.length)throw new Error("You are not allowed to save. Please log in again.");
+  if(pending&&editId&&editFiles.length)await sb.storage.from(B).remove(editFiles);
+  reset();msg("Project saved. It now shows on the Projects page.");await load();
+ }catch(e){if(up.length)await sb.storage.from(B).remove(up);msg("Could not save: "+((e&&e.message)||"unknown error")+". Please try again.",1);b.textContent=lbl}
+ finally{b.disabled=false;busy=false}};
+async function del(p){try{var r=await sb.from("projects").delete().eq("id",p.id).select();if(r.error)throw r.error;if(!r.data.length)throw new Error("You are not allowed to delete. Please log in again.");
+ if((p.beme_files||[]).length)await sb.storage.from(B).remove(p.beme_files);await load()}catch(e){msg("Could not delete: "+e.message,1)}}
+async function load(){var r=await sb.from("projects").select("*").order("created_at",{ascending:false}),L=$("list");L.textContent="";
+ if(r.error){L.textContent="Could not load projects.";return}
+ (r.data||[]).forEach(function(p){var c=el("div","card");c.appendChild(el("h3",null,p.title));
+  c.appendChild(el("div","meta",[p.location,p.client,p.status,p.project_date].filter(Boolean).join(" \u00b7 ")+" \u00b7 "+(p.beme_files||[]).length+" BEME page(s)"));
+  var a=el("div","acts"),e=el("button","btn alt sm","Edit"),d=el("button","btn alt sm","Delete");e.type=d.type="button";e.onclick=function(){edit(p)};
+  d.onclick=function(){if(d.dataset.s){del(p)}else{d.dataset.s="1";d.textContent="Click again to delete";setTimeout(function(){d.dataset.s="";d.textContent="Delete"},4000)}};
+  a.appendChild(e);a.appendChild(d);c.appendChild(a);L.appendChild(c)})}
+async function gate(){var s=(await sb.auth.getSession()).data.session;$("login").hidden=!!s;$("panel").hidden=!s;if(s)await load()}
+$("go").onclick=async function(){var m=$("lm");m.style.color="";m.textContent="Logging in...";
+ var r=await sb.auth.signInWithPassword({email:$("em").value.trim(),password:$("pw").value});
+ if(r.error){m.style.color="#d64545";m.textContent="Login failed: "+r.error.message;return}$("pw").value="";m.textContent="";await gate()};
+$("pw").onkeydown=function(e){if(e.key==="Enter")$("go").click()};
+$("out").onclick=async function(){await sb.auth.signOut();reset();await gate()};
+$("ce").onclick=reset;
+reset();gate();
+})();
+</script>
+</body></html>

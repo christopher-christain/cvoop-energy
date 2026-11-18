@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="CVOOP Energy designs and installs solar power systems for homes and businesses. Get a free quote."><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%80%EF%B8%8F%3C/text%3E%3C/svg%3E"><title>CVOOP Energy | Solar Power for Homes and Businesses</title>
+<style>
+:root{--bg:#fffdf7;--surface:#ffffff;--text:#1b2a22;--muted:#5a6b61;--brand:#0f6b3e;--brand-d:#0a4d2c;--sun:#f5a623;--line:#e6e2d3;--on-brand:#ffffff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1511;--surface:#16211b;--text:#eaf2ec;--muted:#9bb0a3;--brand:#3fbf7f;--brand-d:#2fa56a;--sun:#f7b84a;--line:#25352c;--on-brand:#06210f}}
+:root[data-theme="dark"]{--bg:#0e1511;--surface:#16211b;--text:#eaf2ec;--muted:#9bb0a3;--brand:#3fbf7f;--brand-d:#2fa56a;--sun:#f7b84a;--line:#25352c;--on-brand:#06210f}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:transparent;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--bg) 82%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:5}
+nav{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:.5px;color:var(--text);text-decoration:none}
+.logo span{color:var(--brand)}
+nav a.link{color:var(--muted);text-decoration:none;margin-left:20px;font-size:.95rem}
+@media(max-width:640px){nav a.link{display:none}}
+.btn{display:inline-block;background:var(--brand);color:var(--on-brand);padding:12px 22px;border-radius:10px;font-weight:600;text-decoration:none;border:0;cursor:pointer;font-size:1rem}
+.btn:hover{background:var(--brand-d)}
+.btn.alt{background:transparent;color:var(--text);border:1px solid var(--line)}
+.hero{padding:72px 0 56px;text-align:center}
+.tag{display:inline-block;background:var(--surface);border:1px solid var(--line);padding:4px 14px;border-radius:99px;font-size:.85rem;color:var(--muted)}
+h1{font-size:clamp(2.1rem,6vw,3.6rem);line-height:1.1;margin:18px 0 14px}
+h1 em{font-style:normal;color:var(--sun)}
+.hero p{max-width:600px;margin:0 auto 28px;color:var(--muted);font-size:1.1rem}
+.hero .btn{margin:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:44px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.stat b{display:block;font-size:1.6rem;color:var(--brand)}
+.stat span{font-size:.85rem;color:var(--muted)}
+section{padding:56px 0}
+h2{font-size:1.9rem;margin:0 0 8px}
+.sub{color:var(--muted);margin:0 0 28px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px}
+.card .ic{font-size:1.8rem}
+.card h3{margin:10px 0 6px;font-size:1.1rem}
+.card p{margin:0;color:var(--muted);font-size:.95rem}
+.steps{counter-reset:s}
+.steps .card{position:relative;padding-top:44px}
+.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:14px;left:22px;width:26px;height:26px;border-radius:50%;background:var(--sun);color:#222;font-weight:700;display:grid;place-items:center;font-size:.9rem}
+.calc{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;display:grid;gap:22px;grid-template-columns:1fr 1fr}
+@media(max-width:700px){.calc{grid-template-columns:1fr}}
+label{display:block;font-size:.9rem;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit}
+.out{background:var(--bg);border:1px dashed var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;justify-content:center}
+.out b{font-size:1.9rem;color:var(--brand)}
+.out small{color:var(--muted)}
+.cta{background:var(--brand);color:var(--on-brand);border-radius:20px;padding:40px 24px;text-align:center}
+.cta p{opacity:.9}
+.cta .btn{background:var(--on-brand);color:var(--brand)}
+footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);font-size:.9rem;text-align:center}
+[hidden]{display:none!important}
+body[data-view="projects"] main>*:not(#projects){display:none}
+body[data-view="admin"] main>*:not(#admin):not(#locked){display:none}
+body[data-view="home"] #projects,body[data-view="home"] #admin,body[data-view="home"] #locked,body[data-view="projects"] #locked,body[data-view="projects"] #admin{display:none}
+.proj h3{margin:0 0 4px}.meta{color:var(--muted);font-size:.85rem;margin-bottom:8px}.proj details{margin-top:12px}.proj summary{cursor:pointer;color:var(--brand);font-weight:600}.tw{overflow-x:auto}table.beme{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px}table.beme th,table.beme td{border-bottom:1px solid var(--line);padding:6px;text-align:left;white-space:nowrap}.acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.btn.sm{padding:6px 12px;font-size:.85rem}.adm{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px}.row{display:grid;grid-template-columns:2fr .8fr .7fr .9fr auto;gap:6px;margin-top:6px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:700px){.row{grid-template-columns:1fr 1fr}.row .it{grid-column:1/-1}.two{grid-template-columns:1fr}}
+html{background:var(--bg)}
+#sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:linear-gradient(#9edbff,#fff4d6)}
+#sun,#moon{position:absolute;border-radius:50%;transform:translate(-50%,-50%)}
+#sun{width:64px;height:64px;background:radial-gradient(circle,#fffbe0 0 35%,#ffd65a 72%);box-shadow:0 0 60px 30px rgba(255,214,90,.45)}
+#moon{width:46px;height:46px;background:#f3f1e6;box-shadow:0 0 30px 8px rgba(220,225,255,.3),inset -12px -6px 0 0 #c9c7b8;opacity:0}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff}
+#cyc{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;background:var(--surface);color:var(--text)}
+.card,.stat,.calc,.adm,.out,input,select,textarea,header{transition:background-color .8s,border-color .8s,color .8s}
+body{transition:color .8s}
+html{-webkit-text-size-adjust:100%}
+input,select,textarea{font-size:16px}
+.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.btn.sm{min-height:40px}
+.menu{display:none;background:none;border:1px solid var(--line);color:var(--text);border-radius:10px;width:44px;height:44px;font-size:1.3rem;cursor:pointer}
+@media(max-width:640px){
+.wrap{padding:0 16px}
+.menu{display:inline-block}
+nav .navlinks{display:none;position:absolute;left:0;right:0;top:100%;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 16px 16px;flex-direction:column}
+nav .navlinks.open{display:flex}
+nav .navlinks a.link:not([hidden]){display:block!important;margin:0;padding:14px 0;font-size:1.05rem;border-bottom:1px solid var(--line)}
+nav .navlinks .btn{margin:14px 0 0!important;padding:12px 16px!important}
+.hero{padding:44px 0 36px}
+.hero .btn{display:flex;width:100%;margin:10px 0}
+.stats{gap:8px;margin-top:32px}.stat{padding:12px 6px}.stat b{font-size:1.3rem}.stat span{font-size:.75rem}
+section{padding:36px 0}h2{font-size:1.5rem}
+.calc{padding:18px}.cta{padding:28px 16px}.adm{padding:16px}
+}
+.bimg{display:block;width:100%;max-height:320px;object-fit:contain;background:var(--bg);border:1px solid var(--line);border-radius:10px;margin-top:12px}
+.bwrap{position:relative;margin-top:12px;cursor:zoom-in;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.bwrap .bimg{margin-top:0;pointer-events:none;-webkit-user-drag:none}
+.bshield{position:absolute;inset:0}
+.lbox{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:16px;gap:12px}
+.lbox>.btn{position:sticky;top:0;flex:none;z-index:2}
+.lbox .bwrap{flex:none}
+.lbox .bwrap{cursor:default;max-width:100%}
+.lbox .bimg{max-height:calc(100vh - 110px);width:auto;max-width:100%;border:0}
+@media print{.bwrap,.lbox{display:none!important}}
+.bshield.wm{background-image:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='160'%3E%3Ctext x='130' y='80' text-anchor='middle' font-family='Arial' font-size='22' font-weight='700' fill='white' fill-opacity='.55' stroke='black' stroke-opacity='.35' stroke-width='.8' transform='rotate(-30 130 80)'%3ECVOOP ENERGY%3C/text%3E%3C/svg%3E");background-repeat:repeat}
+</style>
+</head>
+<body data-view="home">
+<div id="sky" aria-hidden="true"><div id="sun"></div><div id="moon"></div></div>
+<header><div class="wrap"><nav>
+<a class="logo" href="#top">CVOOP <span>Energy</span></a>
+<button class="menu" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false">☰</button>
+<div class="navlinks" id="navLinks"><a class="link" href="#services">Services</a><a class="link" href="#process">How it works</a><a class="link" href="#savings">Savings</a><a class="btn" style="margin-left:20px;padding:8px 16px" href="#contact">Get a quote</a></div>
+</nav></div></header>
+
+<main id="top">
+<div class="wrap hero">
+<span class="tag">☀️ Clean, reliable power for Nigeria</span>
+<h1>Stop paying for fuel. <em>Power up with the sun.</em></h1>
+<p>CVOOP Energy designs and installs solar systems for homes, shops and businesses, so you get steady light and less noise, with lower bills.</p>
+<a class="btn" href="#contact">Get a free quote</a> <a class="btn alt" href="#savings">See how much you could save</a>
+<div class="stats">
+<div class="stat"><b>24/7</b><span>Power with battery backup</span></div>
+<div class="stat"><b>0</b><span>Fuel, noise or fumes</span></div>
+<div class="stat"><b>Free</b><span>Site assessment</span></div>
+</div>
+</div>
+
+<section id="services"><div class="wrap">
+<h2>What we do</h2><p class="sub">Solar solutions sized to your needs and budget.</p>
+<div class="grid">
+<div class="card"><div class="ic">🏠</div><h3>Home solar</h3><p>Run lights, fans, TV, fridge and more without depending on the grid or a generator.</p></div>
+<div class="card"><div class="ic">🏪</div><h3>Business solar</h3><p>Keep shops, offices, salons and clinics running through outages and cut daily costs.</p></div>
+<div class="card"><div class="ic">🔋</div><h3>Batteries and inverters</h3><p>Quality inverter and battery setups so you have power at night and on cloudy days.</p></div>
+<div class="card"><div class="ic">🛠️</div><h3>Maintenance and support</h3><p>Check-ups, repairs and upgrades so your system keeps performing for years.</p></div>
+</div></div></section>
+
+<section id="process"><div class="wrap">
+<h2>How it works</h2><p class="sub">Simple, clear and no surprises.</p>
+<div class="grid steps">
+<div class="card"><h3>Tell us your needs</h3><p>Share your appliances and budget, and we assess your site for free.</p></div>
+<div class="card"><h3>Get your quote</h3><p>A clear system design and price, with options to fit what you can spend.</p></div>
+<div class="card"><h3>We install</h3><p>Our team installs and tests everything, then shows you how to use it.</p></div>
+<div class="card"><h3>Enjoy steady power</h3><p>Switch on, relax, and watch your fuel spending drop.</p></div>
+</div></div></section>
+
+<section id="savings"><div class="wrap">
+<h2>Estimate your savings</h2><p class="sub">Enter what you spend on fuel for your generator. This is a rough guide only; your quote will be exact.</p>
+<div class="calc">
+<div>
+<label for="spend">Monthly generator fuel spend (₦)</label>
+<input id="spend" type="number" min="0" value="60000" step="5000">
+<label for="cut">Estimated reduction with solar</label>
+<select id="cut"><option value="0.6">Partial backup (about 60%)</option><option value="0.8" selected>Most of my power (about 80%)</option><option value="0.95">Almost fully solar (about 95%)</option></select>
+</div>
+<div class="out">
+<small>Estimated yearly saving on fuel</small>
+<b id="yr">₦0</b>
+<small id="mo"></small>
+</div>
+</div></div></section>
+
+<section id="why"><div class="wrap">
+<h2>Why CVOOP Energy</h2><p class="sub">&nbsp;</p>
+<div class="grid">
+<div class="card"><div class="ic">✅</div><h3>Honest sizing</h3><p>We recommend what you need, not the most expensive option.</p></div>
+<div class="card"><div class="ic">📍</div><h3>Local team</h3><p>Based in Nigeria, close to you and quick to respond.</p></div>
+<div class="card"><div class="ic">🌍</div><h3>Cleaner air</h3><p>No smoke, no noise, and a smaller footprint for your community.</p></div>
+</div></div></section>
+
+<section id="contact"><div class="wrap">
+<div class="cta">
+<h2>Ready to go solar?</h2>
+<p>Tell us a little about what you need and we will get back to you with a free quote.</p>
+<div style="max-width:420px;margin:18px auto;text-align:left">
+<label for="nm" style="color:inherit">Your name</label><input id="nm" autocomplete="name">
+<label for="ph" style="color:inherit">Phone number</label><input id="ph" type="tel" autocomplete="tel">
+<label for="ty" style="color:inherit">I need solar for</label>
+<select id="ty"><option>My home</option><option>My business</option><option>Not sure yet</option></select>
+</div>
+<button class="btn" id="send" type="button">Request quote on WhatsApp</button>
+</div>
+</div></section>
+</main>
+
+<footer><div class="wrap">© <span id="y"></span> CVOOP Energy. All rights reserved.<br>WhatsApp: 0904 288 3487 · <a href="mailto:cvoopenergy@gmail.com" style="color:inherit">cvoopenergy@gmail.com</a></div></footer>
+
+<script>
+(function(){
+  var fmt=function(n){return "₦"+Math.round(n).toLocaleString("en-NG")};
+  var s=document.getElementById("spend"),c=document.getElementById("cut");
+  function calc(){var m=(parseFloat(s.value)||0)*parseFloat(c.value);
+    document.getElementById("yr").textContent=fmt(m*12);
+    document.getElementById("mo").textContent="About "+fmt(m)+" every month";}
+  s.addEventListener("input",calc);c.addEventListener("change",calc);calc();
+  document.getElementById("y").textContent=new Date().getFullYear();
+  // Replace with the real WhatsApp number in international format, digits only
+  var WHATSAPP="2349042883487";
+  document.getElementById("send").addEventListener("click",function(){
+    var t="Hello CVOOP Energy, I’m "+(document.getElementById("nm").value||"a new customer")+
+      ". I need solar for: "+document.getElementById("ty").value+
+      ". My phone: "+(document.getElementById("ph").value||"—")+". Please send me a quote.";
+    window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(t),"_blank");
+  });
+})();
+</script>
+<script>
+(function(){
+var root=document.documentElement,sky=document.getElementById("sky"),sun=document.getElementById("sun"),moon=document.getElementById("moon"),btn=document.getElementById("cyc");
+var stars=[];for(var i=0;i<45;i++){var s=document.createElement("i");s.className="star";s.style.left=(Math.random()*100)+"%";s.style.top=(Math.random()*60)+"%";s.style.opacity=0;s.style.transform="scale("+(0.6+Math.random()*1.2)+")";sky.appendChild(s);stars.push(s)}
+var KD=[[-1,[7,12,28],[18,28,52]],[-0.12,[7,12,28],[18,28,52]],[0,[42,35,80],[100,50,80]],[0.18,[70,50,70],[120,70,60]],[0.5,[20,50,80],[40,70,95]],[1,[20,50,80],[40,70,95]]];
+var KL=[[-1,[150,165,205],[215,210,232]],[-0.12,[150,165,205],[215,210,232]],[0,[205,160,190],[255,205,170]],[0.18,[255,190,130],[255,232,185]],[0.5,[150,210,250],[255,246,222]],[1,[150,210,250],[255,246,222]]];
+var K=KL,mq=matchMedia("(prefers-color-scheme: dark)");
+function cl(v,a,b){return Math.min(b,Math.max(a,v))}
+function mix(a,b,t){return a.map(function(v,i){return Math.round(v+(b[i]-v)*t)})}
+function rgb(c){return "rgb("+c.join(",")+")"}
+function pal(e){for(var i=1;i<K.length;i++){if(e<=K[i][0]){var t=(e-K[i-1][0])/(K[i][0]-K[i-1][0]);return[mix(K[i-1][1],K[i][1],t),mix(K[i-1][2],K[i][2],t)]}}return[K[5][1],K[5][2]]}
+function draw(h){
+ var dark=mq.matches;K=dark?KD:KL;var p=(h-6)/12,e=Math.sin(Math.PI*p),c=pal(e);
+ sky.style.background="linear-gradient(to bottom,"+rgb(c[0])+","+rgb(c[1])+")";
+ root.removeAttribute("data-theme");
+ var sc=mix([255,110,40],[255,214,90],cl(e*2.5,0,1));
+ sun.style.background="radial-gradient(circle,#fffbe0 0 35%,"+rgb(sc)+" 72%)";
+ sun.style.boxShadow="0 0 60px 30px rgba("+sc.join(",")+",.45)";
+ sun.style.display=(p>-0.12&&p<1.12)?"block":"none";
+ sun.style.left=(5+90*p)+"%";sun.style.top=(88-72*Math.sin(Math.PI*p))+"%";
+ var pm=h>=18?(h-18)/12:(h+6)/12;
+ moon.style.left=(5+90*pm)+"%";moon.style.top=(88-72*Math.sin(Math.PI*pm))+"%";
+ moon.style.opacity=cl((0.05-e)*6,0,1);
+ var n=dark?cl((-e-0.05)/0.4,0,1):0;stars.forEach(function(x){x.style.opacity=n});
+}
+var previewing=false,timer=null,last=null,reduce=matchMedia("(prefers-reduced-motion: reduce)").matches,H=reduce?12:7;
+function real(){var d=new Date();return d.getHours()+d.getMinutes()/60}
+function tick(){draw(H)}
+tick();if(mq.addEventListener)mq.addEventListener("change",tick);
+if(!reduce){(function f(t){if(last!=null){H=(H+(t-last)/1000*24/60)%24}last=t;draw(H);requestAnimationFrame(f)})(performance.now());}
+if(btn)btn.onclick=function(){
+ if(previewing){previewing=false;clearInterval(timer);btn.textContent="▶ Preview sun cycle";tick();return}
+ previewing=true;btn.textContent="■ Stop preview";
+ var start=real(),step=0;
+ timer=setInterval(function(){step++;draw((start+step*0.1)%24);if(step>=240){previewing=false;clearInterval(timer);btn.textContent="▶ Preview sun cycle";tick()}},80);
+};
+})();
+</script>
+<script>
+(function(){var b=document.getElementById("menuBtn"),n=document.getElementById("navLinks");
+function set(o){n.classList.toggle("open",o);b.setAttribute("aria-expanded",o);b.textContent=o?"✕":"☰"}
+b.onclick=function(){set(!n.classList.contains("open"))};
+n.addEventListener("click",function(e){if(e.target.closest("a"))set(false)});})();
+</script>
+</body>
+</html>
